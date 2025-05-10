@@ -38,4 +38,4 @@ Make sure you have **Python 3.x** and **NumPy** installed.
 2. Run the main file:
 
 ```bash
-python pathfinder.py
+python alg_project1.py
