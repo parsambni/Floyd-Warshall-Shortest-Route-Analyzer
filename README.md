@@ -54,6 +54,7 @@ Adjacency Matrix:
 MENU OPTIONS:
 1. Find shortest path between two vertices
 2. Exit program
+
 Enter your choice (1-2): 1
 
 From vertex (0-3): 0
