@@ -39,3 +39,32 @@ Make sure you have **Python 3.x** and **NumPy** installed.
 
 ```bash
 python alg_project1.py
+```
+
+## 📷 Example Output
+```
+Adjacency Matrix:
+
+        [0]     [1]     [2]     [3]
+[0]     0       5       ∞       2
+[1]     ∞       0       3       ∞
+[2]     ∞       ∞       0       1
+[3]     ∞       ∞       ∞       0
+
+MENU OPTIONS:
+1. Find shortest path between two vertices
+2. Exit program
+Enter your choice (1-2): 1
+
+From vertex (0-3): 0
+To vertex (0-3): 2
+
+PATH ANALYSIS RESULTS:
+
+1. Direct Path:
+   No direct connection exists
+
+2. Shortest Path:
+   Route: v0 -> v3 -> v2
+   Total distance: 3
+```
