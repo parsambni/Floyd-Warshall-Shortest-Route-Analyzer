@@ -1,8 +1,7 @@
-import numpy as np
+import numpy as np 
 
 def create_random_graph(n): 
-    """Create a random adjacency matrix with random values"""
-
+    """Create a random weight matrix with random values"""
     graph = []
     for i in range(n):
         row = []
@@ -16,12 +15,54 @@ def create_random_graph(n):
     return graph
 
 
-def print_matrix_with_indices(matrix, n): 
-    """Print the matrix with row and column indices in a formatted way"""
-
-    print("\nAdjacency Matrix:")
+def print_weight_matrix(matrix, n): 
+    """Print the weight matrix with row and column indices in a formatted way."""
+    print("\nWeight Matrix:")
     
-    # Print & format each column with column indices
+    # Print column headers (indices 0 to n-1)
+    print("\n     ", end="")
+    for j in range(n):
+        print("{:^8}".format(f"[{j}]"), end="")
+    print("\n")
+    
+    # Print each row with row index and corresponding matrix values
+    for i in range(n):
+        print(f"[{i}] ", end="")  # Print row index
+        for j in range(n):
+            if matrix[i][j] == float('inf'):
+                print("{:^8}".format("∞"), end="")  # Format infinity symbol
+            else:
+                print("{:^8}".format(str(matrix[i][j])), end="")  # Format matrix value
+        print()  # Newline after each row
+
+
+def floyed(graph, n):
+    """Floyd algorithm with intermediate matrix P"""
+    dist = [row[:] for row in graph]  # Copy the graph
+
+    P = []
+    for _ in range(n):
+        row = []
+        for _ in range(n):
+            row.append(0)
+        P.append(row)
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if dist[i][k] != float('inf') and dist[k][j] != float('inf'):
+                    if dist[i][j] > dist[i][k] + dist[k][j]:
+                        dist[i][j] = dist[i][k] + dist[k][j]
+                        P[i][j] = k  # Store k directly without +1
+
+    return dist, P
+
+
+def print_shortest_paths_matrix(matrix, n):
+    """Print the shortest paths matrix with row and column indices"""
+    print("\nShortest Paths Matrix:")
+    
+    # Print & format each column indices
     print("\n     ", end="")
     for j in range(n):
         print("{:^8}".format(f"[{j}]"), end="")
@@ -38,48 +79,12 @@ def print_matrix_with_indices(matrix, n):
         print()
 
 
-def floyd_warshall(graph, n):
-    """Floyd-Warshall with intermediate matrix P"""
-    
-    # Copy the graph into dist
-    dist = []
-    for i in range(n):
-        dist.append(graph[i][:])  
-
-    # Initialize P matrix with -1
-    # Later, if a shorter path via vertex k is found, P[i][j] will be updated to k.
-    P = []
-    for i in range(n):
-        row = []
-        for j in range(n):
-            row.append(-1)
-        P.append(row)
-
-    for k in range(n):
-        for i in range(n):
-            for j in range(n):
-                if dist[i][k] != float('inf') and dist[k][j] != float('inf'):
-                    if dist[i][j] > dist[i][k] + dist[k][j]:
-                        dist[i][j] = dist[i][k] + dist[k][j] # Update dist[i][j] with the new shorter distance.
-                        P[i][j] = k # Record k as the intermediate vertex on the shortest path from i to j.
-    return dist, P
-
-
 def construct_path(P, start, end):
     """Recursive path reconstruction that returns a list"""
-
-    if P[start][end] == -1:
+    if P[start][end] == 0:
         return []
-    mid = P[start][end]
+    mid = P[start][end]  
     return construct_path(P, start, mid) + [mid] + construct_path(P, mid, end)
-
-
-def display_menu(): 
-    print("\n" + "-" * 43)
-    print("MENU OPTIONS:")
-    print("1. Find shortest path between two vertices")
-    print("2. Exit program")
-    print("-" * 43)
 
 
 def display_results(start, end, direct_weight, dist_matrix, P): 
@@ -102,25 +107,14 @@ def display_results(start, end, direct_weight, dist_matrix, P):
         print(f"   Total distance: {dist_matrix[start][end]}")
 
 
-def setup_graph(): 
-    print("\nWelcome to Floyd-Warshall Algorithm Path Finder")
-    print("------------------------------------------------")
-    while True:
-        try:
-            n = int(input("\nEnter n for the dimension of the n x n matrix: "))
-            if n > 0:
-                break
-            print("Error: Please enter a positive number.")
-        except ValueError:
-            print("Error: Please enter a valid number.")
-    graph = create_random_graph(n)
-    print_matrix_with_indices(graph, n)
-    return graph, n
-
-
 def handle_user_interaction(graph, dist_matrix, P, n): 
     while True:
-        display_menu()
+        print("\n" + "-" * 43)
+        print("MENU OPTIONS:")
+        print("1. Find shortest path between two vertices")
+        print("2. Exit program")
+        print("-" * 43)
+
         try:
             choice = input("\nEnter your choice (1-2): ")
 
@@ -140,8 +134,7 @@ def handle_user_interaction(graph, dist_matrix, P, n):
                     print(f"Error: Please enter a number between 0 and {n-1}")
                     continue
 
-                direct_weight = graph[start][end]
-                display_results(start, end, direct_weight, dist_matrix, P)
+                display_results(start, end, graph[start][end], dist_matrix, P)
 
             else:
                 print("Error: Invalid choice. Please enter 1 or 2.")
@@ -150,8 +143,24 @@ def handle_user_interaction(graph, dist_matrix, P, n):
 
 
 def main(): 
-    graph, n = setup_graph()
-    dist_matrix, P = floyd_warshall(graph, n)
+    print("\nWelcome to Floyd'S Algorithm Path Finder")
+    print("------------------------------------------------")
+    
+    while True:
+        try:
+            n = int(input("\nEnter n for the dimension of the n x n matrix: "))
+            if n > 0:
+                break
+            print("Error: Please enter a positive number.")
+        except ValueError:
+            print("Error: Please enter a valid number.")
+
+    graph = create_random_graph(n)
+    print_weight_matrix(graph, n)
+    
+    dist_matrix, P = floyed(graph, n)
+    print_shortest_paths_matrix(dist_matrix, n)
+    
     handle_user_interaction(graph, dist_matrix, P, n)
 
 
